@@ -3,7 +3,13 @@
 
 This is a script that generates an interactive geo heatmap from your Google location history data using Python, Folium and OpenStreetMap.
 
-## Getting Started
+## Getting Started - Local install
+
+Use this option if:
+
+* You don't have, don't want or don't know [Docker](https://www.docker.com/)
+* You already have Python 3 and the dependencies installed
+* You don't mind installing Python and dependencies on your system
 
 ### 1. Install Python 3+
 If you don't already have Python 3+ installed, grab it from <https://www.python.org/downloads/>. You'll want to download install the latest version of **Python 3.x**. As of 2019-11-22, that is Version 3.8.
@@ -48,7 +54,7 @@ positional arguments:
   file                  Any of the following files:
                         1. Your location history JSON file from Google Takeout
                         2. Your location history KML file from Google Takeout
-                        3. The takeout-*.zip raw download from Google Takeout 
+                        3. The takeout-*.zip raw download from Google Takeout
                         that contains either of the above files
 
 optional arguments:
@@ -65,6 +71,78 @@ optional arguments:
 ### 6. Review the Results
 
 The script will generate a HTML file named `heatmap.html`. This file will automatically open in your browser once the script completes. Enjoy!
+
+
+## Getting Started - Docker
+
+Use this option if:
+
+* You have [Docker](https://www.docker.com/) installed
+* You don't want to install all your software's dependencies on your system
+
+
+### 1. Clone This Repository
+Exactly as in `Local install`
+
+
+### 2. Prepare a data folder
+Create a folder for the data files in your project folder
+```
+$ mkdir data
+```
+
+### 3. Get Your Location Data
+Exactly as in `Local install`
+
+Copy the `json`/`zip` file into your project's data folder (better use an easy name like `history.json`/`takeout.zip`)
+
+
+### 4. Build the container
+From your project folder:
+```
+$ docker build -t geo-heatmap .
+```
+
+### 5. Run the Script
+(refer to the `Local install` section for details)
+
+From your project folder:
+```
+$ docker run --rm -v $(pwd)/data:/data geo-heatmap /data/history.json -o /data/map.html
+```
+
+(this can be easily put in a shell script)
+
+The result will be something like
+```
+Loading data from /data/history.json...
+|                                                          |N/A% ETA:  --:--:--
+|######                                                    | 11% ETA:   0:00:00
+|#############                                             | 22% ETA:   0:00:00
+|###################                                       | 34% ETA:   0:00:00
+|###########################                               | 46% ETA:   0:00:00
+|##################################                        | 59% ETA:   0:00:00
+|#########################################                 | 70% ETA:   0:00:00
+|###############################################           | 82% ETA:   0:00:00
+|######################################################    | 93% ETA:   0:00:00
+Generating heatmap...
+|##########################################################|100% Time:  0:00:00
+Saving map to /data/map.html...
+Traceback (most recent call last):
+  File "/app/geo_heatmap.py", line 262, in <module>
+    if not isTextBasedBrowser(webbrowser.get()):
+  File "/usr/local/lib/python3.8/webbrowser.py", line 65, in get
+    raise Error("could not locate runnable browser")
+webbrowser.Error: could not locate runnable browser
+```
+
+The error is due to the fact that the script is run inside a container. The `map.html` will be generated in your data folder anyway.
+
+### 6. Review the Results
+
+You will have to manually open the `html` file generated in your data folder.
+
+
 
 ## FAQ
 
